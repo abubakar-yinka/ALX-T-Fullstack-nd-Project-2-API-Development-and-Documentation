@@ -54,6 +54,23 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'resource not found')
 
+    def test_get_categories(self):
+        res = self.client().get('/categories')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue(len(data['categories']))
+
+    def test_422_if_categories_fetching_failed(self):
+        res = self.client().get('/categories')
+        data = json.loads(res.data)
+
+        with self.assertRaises(Exception):
+            self.assertEqual(res.status_code, 422)
+            self.assertEqual(data['success'], False)
+            self.assertEqual(data['message'], 'unprocessable')
+
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
