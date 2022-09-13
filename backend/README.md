@@ -245,7 +245,7 @@ The API will return four error types when requests fail:
 - Deletes a question from the database
 - Request Arguments: `question_id`, a string.
 - Returns: An object with a two key, `deleted`, the `id` of the deleted question and `success` boolean.
-- Sample: `curl http://127.0.0.1:5000/questions/1`
+- Sample: `curl -X DELETE http://127.0.0.1:5000/questions/1`
 
 ```json
 {
