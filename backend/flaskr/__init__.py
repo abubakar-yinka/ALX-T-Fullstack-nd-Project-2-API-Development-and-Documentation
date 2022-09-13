@@ -266,7 +266,8 @@ def create_app(test_config=None):
 
         return jsonify({
             'success': True,
-            'question': question.format()
+            'question': question.format(),
+            'no_of_questions': len(questions)
         })
 
     """

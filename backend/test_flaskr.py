@@ -19,7 +19,7 @@ class TriviaTestCase(unittest.TestCase):
         self.DB_PASSWORD = os.getenv('DB_PASSWORD', 'postgres')
         self.DB_TEST_NAME = os.getenv('DB_NAME', 'trivia_test')
         self.database_path = "postgresql://{}:{}@{}/{}".format(
-            self.DB_USER, self.DB_PASSWORD, self.DB_HOST, self.database_name)
+            self.DB_USER, self.DB_PASSWORD, self.DB_HOST, self.DB_TEST_NAME)
         setup_db(self.app, self.database_path)
 
         """Define test mock data variables and initialize app."""
@@ -83,14 +83,14 @@ class TriviaTestCase(unittest.TestCase):
             self.assertEqual(data['message'], 'unprocessable')
 
     def test_delete_question(self):
-        res = self.client().delete('/questions/11')
+        res = self.client().delete('/questions/27')
         data = json.loads(res.data)
 
-        question = Question.query.filter(Question.id == 11).one_or_none()
+        question = Question.query.filter(Question.id == 27).one_or_none()
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
-        self.assertEqual(data['deleted'], 11)
+        self.assertEqual(data['deleted'], 27)
         self.assertEqual(question, None)
 
     def test_404_if_question_does_not_exist(self):
@@ -161,6 +161,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
         self.assertTrue(data['question'])
+        self.assertTrue(data['no_of_questions'])
 
     def test_404_if_quiz_questions_not_found(self):
         res = self.client().post('/quizzes',
