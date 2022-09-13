@@ -9,8 +9,6 @@ from models import setup_db, Question, Category
 QUESTIONS_PER_PAGE = 10
 
 # Defined reusable paginate_questions function
-
-
 def paginate_questions(request, selection):
     page = request.args.get('page', 1, type=int)
     start = (page - 1) * QUESTIONS_PER_PAGE
@@ -20,6 +18,10 @@ def paginate_questions(request, selection):
     paginated_questions = questions[start:end]
 
     return paginated_questions
+
+# Defined reusable function for getting a random question from a list of questions
+def get_random_question(questions):
+    return questions[random.randint(0, len(questions) - 1)]
 
 
 def create_app(test_config=None):
@@ -226,13 +228,45 @@ def create_app(test_config=None):
     and return a random questions within the given category,
     if provided, and that is not one of the previous questions.
 
+    DONE!✅
+
     TEST: In the "Play" tab, after a user selects "All" or a category,
     one question at a time is displayed, the user is allowed to answer
     and shown whether they were correct or not.
+
+    TESTED!✅
     """
+    @app.route('/quizzes', methods=['POST'])
+    def get_quiz_questions():
+        body = request.get_json()
+        previous_questions = body.get('previous_questions', None)
+        quiz_category = body.get('quiz_category', None)
+        quiz_category_id = quiz_category['id']
+
+        if quiz_category_id == 0:
+            questions = Question.query.all()
+        else:
+            questions = Question.query.filter(
+                Question.category == quiz_category_id).all()
+
+        if len(questions) == 0:
+            abort(404)
+
+        question = get_random_question(questions)
+
+        while question.id in previous_questions:
+            question = get_random_question(questions)
+
+        return jsonify({
+            'success': True,
+            'question': question.format()
+        })
 
     """
     @TODO:
+
+    DONE!✅
+    
     Create error handlers for all expected errors
     including 404 and 422.
     """
