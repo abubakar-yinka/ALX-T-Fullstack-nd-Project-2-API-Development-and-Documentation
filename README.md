@@ -47,3 +47,101 @@ Pay special attention to what data the frontend is expecting from each API respo
 By making notes ahead of time, you will practice the core skill of being able to read and understand code and will have a simple plan to follow to build out the endpoints of your backend API.
 
 > View the [Frontend README](./frontend/README.md) for more details.
+
+## Local Development 
+The instructions below are meant for the local setup only. 
+
+#### Pre-requisites
+* Developers using this project should already have Python3, pip and node installed on their local machines.
+
+
+* **Start your virtual environment** 
+From the backend folder run
+```bash
+# Mac users
+python3 -m venv venv
+source venv/bin/activate
+# Windows users
+> py -3 -m venv venv
+> venv\Scripts\activate
+```
+
+* **Install dependencies**<br>
+From the backend folder run 
+```bash
+# All required packages are included in the requirements file. 
+pip3 install -r requirements.txt
+```
+
+### Step 1 - Create and Populate the database
+1. **Verify the database username**<br>
+Verify that the database user in the `/backend/trivia.psql`, `/backend/models.py`, and `/backend/test_flaskr.py` files must be either the `student` or `postgres` (default username).(See the `/backend/setup.sql` for more details!)
+
+2. **Create the database and a user**<br>
+In your terminal, navigate to the */ALX-T-Fullstack-nd-Project-2-API-Development-and-Documentation/backend/* directory, and run the following:
+```bash
+cd ALX-T-Fullstack-nd-Project-2-API-Development-and-Documentation/backend
+# Connect to the PostgreSQL
+psql postgres
+#View all databases
+\l
+# Create the database, create a user - `student`, grant all privileges to the student
+\i setup.sql
+# Exit the PostgreSQL prompt
+\q
+```
+
+
+3. **Create tables**<br>
+Once your database is created, you can create tables (`trivia`) and apply contraints
+```bash
+# Mac users
+psql -f books.psql -U student -d trivia
+# Linux users
+su - postgres bash -c "psql trivia < /path/to/exercise/backend/books.psql"
+
+```
+**You can even drop the database and repopulate it, if needed, using the commands above.** 
+
+
+### Step 2: Complete the ToDos and Start the backend server
+Start the (backend) Flask server by running the command below from the `/backend/` directory.
+```bash
+# Mac Users
+export FLASK_APP=flaskr
+export FLASK_DEBUG=true
+
+# Windows Users
+$env:FLASK_APP="flaskr" 
+$env:FLASK_DEBUD="true"
+
+flask run
+```
+These commands put the application in development and directs our application to use the `__init__.py` file in our flaskr folder. Working in development mode shows an interactive debugger in the console and restarts the server whenever changes are made. If running locally on Windows, look for the commands in the [Flask documentation](http://flask.pocoo.org/docs/1.0/tutorial/factory/).
+
+The application will run on `http://127.0.0.1:5000/` by default and is set as a proxy in the frontend configuration. Also, the current version of the application does not require authentication or API keys. 
+
+
+
+### Step 3: Start the frontend
+(You can start the frontend even before the backend is up!)
+From the `frontend` folder, run the following commands to start the client: 
+```
+npm install // only once to install dependencies
+npm start 
+```
+By default, the frontend will run on `localhost:3000`. Close the terminal if you wish to stop the frontend server. 
+
+---
+
+## Additional information
+#### Running Tests
+If any exercise needs testing, navigate to the `/backend` folder and run the following commands: 
+```bash
+psql postgres
+dropdb trivia_test
+createdb trivia_test
+\q
+psql trivia_test < trivia.psql
+python test_flaskr.py
+```
