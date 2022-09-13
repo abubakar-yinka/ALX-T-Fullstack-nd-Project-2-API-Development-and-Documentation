@@ -266,6 +266,42 @@ Request Body: `question`, `answer`, `category`(id), `difficulty` and `searchTerm
 }
 ```
 
+`POST '/api/v1.0/questions'`
+- Search for a question from the database with partial matches.  
+Request Body: `searchTerm`(Solely for search) - a string which is sent as a body in the post request in order to search for a specific question by search term.
+- Returns: any array of `questions`, a number of `total_questions` that met the search term and the `current_category` string
+- Sample: `curl http://127.0.0.1:5000/questions -X POST -H "Content-Type: application/json" -d '{"searchTerm":"world"}'`
+```json
+{
+  "current_category": null,
+  "questions": [
+    {
+      "answer": "Brazil",
+      "category": 6,
+      "difficulty": 3,
+      "id": 10,
+      "question": "Which is the only team to play in every soccer World Cup tournament?"
+    },
+    {
+      "answer": "Uruguay",
+      "category": 6,
+      "difficulty": 4,
+      "id": 11,
+      "question": "Which country won the first ever soccer World Cup in 1930?"
+    },
+    {
+      "answer": "Russia",
+      "category": 3,
+      "difficulty": 5,
+      "id": 24,
+      "question": "In which country are the world\u2019s 10 coldest cities located?"
+    }
+  ],
+  "success": true,
+  "total_questions": 3
+}
+```
+
 `GET '/api/v1.0/categories/{category_id}/questions'`
 - Results are paginated in groups of 10.
 - Request Parameters: Include a request parameter `category_id` to filter `categories` by id.
