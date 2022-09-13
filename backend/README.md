@@ -67,26 +67,263 @@ One note before you delve into your tasks: for each endpoint, you are expected t
 8. Create a `POST` endpoint to get questions to play the quiz. This endpoint should take a category and previous question parameters and return a random questions within the given category, if provided, and that is not one of the previous questions.
 9. Create error handlers for all expected errors including 400, 404, 422, and 500.
 
-## Documenting your Endpoints
+## API Reference
 
-You will need to provide detailed documentation of your API endpoints including the URL, request parameters, and the response body. Use the example below as a reference.
+### Getting Started
+- Base URL: At present this app can only be run locally and is not hosted as a base URL. The backend app is hosted at the default, `http://127.0.0.1:5000/`, which is also set as a proxy in the frontend react app configuration. 
+- Authentication: This version of the application does not require authentication or API keys. 
 
-### Documentation Example
+### Error Handling
+Errors are returned as JSON objects in the following format:
+```
+{
+    "success": False, 
+    "error": 404,
+    "message": "resource not found"
+}
+```
+The API will return four error types when requests fail:
+- 400: Bad Request
+- 404: Resource Not Found
+- 405: Method Not Allowed
+- 422: Not Processable 
 
+### Endpoints 
 `GET '/api/v1.0/categories'`
-
-- Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
+- Fetches a list of categories in which the keys of each object are the `id` and `type`.
 - Request Arguments: None
-- Returns: An object with a single key, `categories`, that contains an object of `id: category_string` key: value pairs.
+- Returns: An object with a two key, `categories`, that contains an object of `id: category_string` key: value pairs and `success`: boolean.
+- Sample: `curl http://127.0.0.1:5000/categories`
 
 ```json
 {
-  "1": "Science",
-  "2": "Art",
-  "3": "Geography",
-  "4": "History",
-  "5": "Entertainment",
-  "6": "Sports"
+  "categories": [
+    {
+      "id": 1,
+      "type": "Science"
+    },
+    {
+      "id": 2,
+      "type": "Art"
+    },
+    {
+      "id": 3,
+      "type": "Geography"
+    },
+    {
+      "id": 4,
+      "type": "History"
+    },
+    {
+      "id": 5,
+      "type": "Entertainment"
+    },
+    {
+      "id": 6,
+      "type": "Sports"
+    }
+  ],
+  "success": true
+}
+
+```
+
+`GET '/api/v1.0/questions'`
+- Results are paginated in groups of 10.
+- Request Arguments: Include a request argument(query param) to choose page number, starting from 1.
+- Returns: An object with a multiple keys, `categories`: that contains an object of`id: category_string`, `success`: boolean, and `total_questions`: number, `questions`: an object containing `id`, `question`, `answer`, `category` and `difficulty` and `current_category`.
+- Sample: `curl http://127.0.0.1:5000/questions?page=1`
+
+```json
+{
+  "categories": [
+    {
+      "id": 1,
+      "type": "Science"
+    },
+    {
+      "id": 2,
+      "type": "Art"
+    },
+    {
+      "id": 3,
+      "type": "Geography"
+    },
+    {
+      "id": 4,
+      "type": "History"
+    },
+    {
+      "id": 5,
+      "type": "Entertainment"
+    },
+    {
+      "id": 6,
+      "type": "Sports"
+    }
+  ],
+  "current_category": null,
+  "questions": [
+    {
+      "answer": "Apollo 13",
+      "category": 5,
+      "difficulty": 4,
+      "id": 2,
+      "question": "What movie earned Tom Hanks his third straight Oscaon, in 1996?"
+    },
+    {
+      "answer": "Tom Cruise",
+      "category": 5,
+      "difficulty": 4,
+      "id": 4,
+      "question": "What actor did author Anne Rice first denounce, then the role of her beloved Lestat?"
+    },
+    {
+      "answer": "Maya Angelou",
+      "category": 4,
+      "difficulty": 2,
+      "id": 5,
+      "question": "Whose autobiography is entitled 'I Know Why the Cagngs'?"
+    },
+    {
+      "answer": "Edward Scissorhands",
+      "category": 5,
+      "difficulty": 3,
+      "id": 6,
+      "question": "What was the title of the 1990 fantasy directed by  about a young man with multi-bladed appendages?"
+    },
+    {
+      "answer": "Muhammad Ali",
+      "category": 4,
+      "difficulty": 1,
+      "id": 9,
+      "question": "What boxer's original name is Cassius Clay?"
+    },
+    {
+      "answer": "Brazil",
+      "category": 6,
+      "difficulty": 3,
+      "id": 10,
+      "question": "Which is the only team to play in every soccer Worlnament?"
+    },
+    {
+      "answer": "Uruguay",
+      "category": 6,
+      "difficulty": 4,
+      "id": 11,
+      "question": "Which country won the first ever soccer World Cup..."
+    },
+    {
+      "answer": "George Washington Carver",
+      "category": 4,
+      "difficulty": 2,
+      "id": 12,
+      "question": "Who invented Peanut Butter?"
+    },
+    {
+      "answer": "Lake Victoria",
+      "category": 3,
+      "difficulty": 2,
+      "id": 13,
+      "question": "What is the largest lake in Africa?"
+    },
+    {
+      "answer": "The Palace of Versailles",
+      "category": 3,
+      "difficulty": 3,
+      "id": 14,
+      "question": "In which royal palace would you find the Hall of Mi..."
+    }
+  ],
+  "success": true,
+  "total_questions": 19
+
+}
+```
+
+`DELETE '/api/v1.0/questions/{question_id}'`
+- Deletes a question from the database
+- Request Arguments: `question_id`, a string.
+- Returns: An object with a two key, `deleted`, the `id` of the deleted question and `success` boolean.
+- Sample: `curl http://127.0.0.1:5000/questions/1`
+
+```json
+{
+  "success": true,
+  "deleted": 1
+}
+```
+
+`POST '/api/v1.0/questions'`
+- Creates a new question record.  
+Request Body: `question`, `answer`, `category`(id), `difficulty` and `searchTerm`(Optional for search only).
+- Returns: An object with a multiple keys, `success`: boolean, and `created`: `id` of the question.
+- Sample: `curl http://127.0.0.1:5000/questions -X POST -H "Content-Type: application/json" -d '{"question":"What is the powerhouse of a cell?", "answer":"Mitochondria", "difficulty":"3", "category":"1"}'`
+```json
+{
+  "created": 25,
+  "success": true
+}
+```
+
+`GET '/api/v1.0/categories/{category_id}/questions'`
+- Results are paginated in groups of 10.
+- Request Parameters: Include a request parameter `category_id` to filter `categories` by id.
+- Returns: An object with a multiple keys, `total_questions`: number, `questions`: an object containing `id`, `question`, `answer`, `category` and `difficulty` and `current_category` which is the `category_id`.
+- Sample: `curl http://127.0.0.1:5000/categories/1/questions`
+```json
+{
+  "current_category": 1,
+  "questions": [
+    {
+      "answer": "The Liver",
+      "category": 1,
+      "difficulty": 4,
+      "id": 20,
+      "question": "What is the heaviest organ in the human body?"
+    },
+    {
+      "answer": "Alexander Fleming",
+      "category": 1,
+      "difficulty": 3,
+      "id": 21,
+      "question": "Who discovered penicillin?"
+    },
+    {
+      "answer": "Blood",
+      "category": 1,
+      "difficulty": 4,
+      "id": 22,
+      "question": "Hematology is a branch of medicine involving the study of what?"
+    },
+    {
+      "answer": "Mitochondria",
+      "category": 1,
+      "difficulty": 3,
+      "id": 25,
+      "question": "What is the powerhouse of a cell?"
+    }
+  ],
+  "success": true,
+  "total_questions": 4
+}
+```
+
+`POST '/api/v1.0/quizzes'`
+- Retrieve a new and random question from a specified category.  
+Request Body: `previous_question` which is an array of `question` objects, and `quiz_category` which is a `category` object containing `id` and `type`.
+- Returns: An object with a two keys, `success`: boolean, and `created`: `id` of the question.
+- Sample: `curl http://127.0.0.1:5000/quizzes -X POST -H "Content-Type: application/json" -d '{"previous_questions":[], "quiz_category":{"type": "Science", "id": 1}}'`
+```json
+{
+  "question": {
+    "answer": "Blood",
+    "category": 1,
+    "difficulty": 4,
+    "id": 22,
+    "question": "Hematology is a branch of medicine involving the study of what?"
+  },
+  "success": true
 }
 ```
 
