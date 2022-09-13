@@ -11,7 +11,7 @@ class QuestionView extends Component {
       questions: [],
       page: 1,
       totalQuestions: 0,
-      categories: {},
+      categories: [],
       currentCategory: null,
     };
   }
@@ -128,8 +128,8 @@ class QuestionView extends Component {
 
   render() {
     return (
-      <div className='question-view'>
-        <div className='categories-list'>
+      <div className="question-view">
+        <div className="categories-list">
           <h2
             onClick={() => {
               this.getQuestions();
@@ -138,37 +138,37 @@ class QuestionView extends Component {
             Categories
           </h2>
           <ul>
-            {Object.keys(this.state.categories).map((id) => (
+            {this.state.categories.map((category) => (
               <li
-                key={id}
+                key={category.id}
                 onClick={() => {
-                  this.getByCategory(id);
+                  this.getByCategory(category.id);
                 }}
               >
-                {this.state.categories[id]}
+                {category.type}
                 <img
-                  className='category'
-                  alt={`${this.state.categories[id].toLowerCase()}`}
-                  src={`${this.state.categories[id].toLowerCase()}.svg`}
+                  className="category"
+                  alt={`${category.type.toLowerCase()}`}
+                  src={`${category.type.toLowerCase()}.svg`}
                 />
               </li>
             ))}
           </ul>
           <Search submitSearch={this.submitSearch} />
         </div>
-        <div className='questions-list'>
+        <div className="questions-list">
           <h2>Questions</h2>
           {this.state.questions.map((q, ind) => (
             <Question
               key={q.id}
               question={q.question}
               answer={q.answer}
-              category={this.state.categories[q.category]}
+              category={this.state.categories.find((c) => c.id === q.category).type}
               difficulty={q.difficulty}
               questionAction={this.questionAction(q.id)}
             />
           ))}
-          <div className='pagination-menu'>{this.createPagination()}</div>
+          <div className="pagination-menu">{this.createPagination()}</div>
         </div>
       </div>
     );
