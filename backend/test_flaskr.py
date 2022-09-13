@@ -26,6 +26,13 @@ class TriviaTestCase(unittest.TestCase):
             'category': 1
         }
 
+        self.new_sports_question = {
+            'question': 'Who is the GOAT in football?',
+            'answer': 'Messi',
+            'difficulty': 2,
+            'category': 6
+        }
+
         # binds the app to the current context
         with self.app.app_context():
             self.db = SQLAlchemy()
@@ -130,6 +137,22 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'resource not found')
+
+    def test_create_new_question_by_category(self):
+        res = self.client().post('/categories/6/questions', json=self.new_sports_question)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue(data['created'])
+
+    def test_405_if_question_creation_by_category_not_allowed(self):
+        res = self.client().post('/categories/6/questions/45', json=self.new_sports_question)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 405)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'method not allowed')
 
 
 # Make the tests conveniently executable
