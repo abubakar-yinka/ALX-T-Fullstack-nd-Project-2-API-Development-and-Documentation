@@ -104,7 +104,7 @@ su - postgres bash -c "psql trivia < /path/to/exercise/backend/books.psql"
 **You can even drop the database and repopulate it, if needed, using the commands above.** 
 
 
-### Step 2: Complete the ToDos and Start the backend server
+### Step 2: Start the backend server
 Start the (backend) Flask server by running the command below from the `/backend/` directory.
 ```bash
 # Mac Users
