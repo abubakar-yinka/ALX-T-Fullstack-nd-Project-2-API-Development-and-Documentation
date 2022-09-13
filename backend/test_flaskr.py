@@ -19,6 +19,7 @@ class TriviaTestCase(unittest.TestCase):
             "student", "student", 'localhost:5432', self.database_name)
         setup_db(self.app, self.database_path)
 
+        """Define test mock data variables and initialize app."""
         self.new_question = {
             'question': 'What is the powerhouse of a cell?',
             'answer': 'Mitochondria',
@@ -45,7 +46,7 @@ class TriviaTestCase(unittest.TestCase):
         pass
 
     """
-    TODO
+    DONE!
     Write at least one test for each test for successful operation and for expected errors.
     """
 
