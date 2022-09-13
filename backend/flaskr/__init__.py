@@ -133,10 +133,47 @@ def create_app(test_config=None):
     which will require the question and answer text,
     category, and difficulty score.
 
+    DONE!✅
+
     TEST: When you submit a question on the "Add" tab,
     the form will clear and the question will appear at the end of the last page
     of the questions list in the "List" tab.
+
+    TESTED!✅
     """
+    @app.route('/questions', methods=['POST'])
+    def create_question():
+        body = request.get_json()
+
+        new_question = body.get('question', None)
+        new_answer = body.get('answer', None)
+        new_category = body.get('category', None)
+        new_difficulty = body.get('difficulty', None)
+        searchTerm = body.get('searchTerm', None)
+
+        if searchTerm:
+            queriedSelection = Question.query.order_by(Question.id).filter(
+                Question.question.ilike('%{}%'.format(searchTerm)))
+            paginated_questions = paginate_questions(request, queriedSelection)
+
+            if len(paginated_questions) == 0:
+                abort(404)
+
+            return jsonify({
+                'success': True,
+                'questions': paginated_questions,
+                'total_questions': len(queriedSelection.all()),
+                'current_category': None
+            })
+
+        question = Question(question=new_question, answer=new_answer,
+                            category=new_category, difficulty=new_difficulty)
+        question.insert()
+
+        return jsonify({
+            'success': True,
+            'created': question.id,
+        })
 
     """
     @TODO:
