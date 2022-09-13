@@ -9,6 +9,8 @@ from models import setup_db, Question, Category
 QUESTIONS_PER_PAGE = 10
 
 # Defined reusable paginate_questions function
+
+
 def paginate_questions(request, selection):
     page = request.args.get('page', 1, type=int)
     start = (page - 1) * QUESTIONS_PER_PAGE
@@ -20,6 +22,8 @@ def paginate_questions(request, selection):
     return paginated_questions
 
 # Defined reusable function for getting a random question from a list of questions
+
+
 def get_random_question(questions):
     return questions[random.randint(0, len(questions) - 1)]
 
